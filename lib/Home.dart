@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       body: StreamBuilder(
         stream: _fabIkonBloc.fabIkonStream,
         builder: (context, snapshot) {
-          if (snapshot.data == false) {
+          if (!snapshot.hasData) {
             return PageView(
               controller: _pageController,
               onPageChanged: (page) {
@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           setState(
             () {
               selectedPage = i;
-              _fabIkonBloc.fabIkonEkleSinki.add(false);
+              _fabIkonBloc.fabIkonEkleSinki.add(null);
             },
           );
         },

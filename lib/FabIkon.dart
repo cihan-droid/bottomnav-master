@@ -55,10 +55,10 @@ class _FabIkonState extends State<FabIkon> with SingleTickerProviderStateMixin {
   animate() {
     if (!isOpened) {
       _animationController.forward();
-      _fabIkonBloc.fabIkonEkleSinki.add(false);
+      _fabIkonBloc.fabIkonEkleSinki.add(true);
     } else {
       _animationController.reverse();
-      _fabIkonBloc.fabIkonEkleSinki.add(true);
+      _fabIkonBloc.fabIkonEkleSinki.add(null);
     }
     isOpened = !isOpened;
   }
