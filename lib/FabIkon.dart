@@ -1,4 +1,5 @@
 import 'package:bottomnav/bloc/fab_icon_bloc.dart';
+import 'package:bottomnav/bloc/fab_icon_bloc_provider.dart';
 import 'package:flutter/material.dart';
 
 class FabIkon extends StatefulWidget {
@@ -42,13 +43,19 @@ class _FabIkonState extends State<FabIkon> with SingleTickerProviderStateMixin {
         curve: _curve,
       ),
     ));
-    _fabIkonBloc = FabIkonBloc();
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fabIkonBloc = FabIkonBlocProvider.of(context).fabIkonBlocc;
   }
 
   @override
   dispose() {
     _animationController.dispose();
+    _fabIkonBloc.dispose();
     super.dispose();
   }
 
@@ -58,7 +65,7 @@ class _FabIkonState extends State<FabIkon> with SingleTickerProviderStateMixin {
       _fabIkonBloc.fabIkonEkleSinki.add(true);
     } else {
       _animationController.reverse();
-      _fabIkonBloc.fabIkonEkleSinki.add(null);
+      _fabIkonBloc.fabIkonEkleSinki.add(false);
     }
     isOpened = !isOpened;
   }

@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:bottomnav/FabIkon.dart';
 import 'package:bottomnav/bloc/fab_icon_bloc.dart';
+import 'package:bottomnav/bloc/fab_icon_bloc_provider.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,84 +41,107 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    _fabIkonBloc.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder(
-        stream: _fabIkonBloc.fabIkonStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return PageView(
-              controller: _pageController,
-              onPageChanged: (page) {
-                setState(() {
-                  _appBarKey.currentState.animateTo(
-                      page); //Sayfa sağa-sola swipe yapıldığında ConvexAppBar'ın seçili olduğu index'i değiştirir.
-                });
-              },
-              children: <Widget>[
-                //PageView içersinde bulunan sayfalar
-                Kesfet(),
-                BanaOzel(),
-                Harita(),
-                Secenekler(),
-                Dahasi(),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
-      bottomNavigationBar: ConvexAppBar(
-        //BottomNavBar
-        items: [
-          TabItem(
-              icon: Image(
-                image: AssetImage('icons/Discovery.png'),
+    return FabIkonBlocProvider(
+        fabIkonBlocc: _fabIkonBloc,
+        child: Scaffold(
+          body: Stack(
+            children: [
+              PageView(
+                controller: _pageController,
+                onPageChanged: (page) {
+                  setState(() {
+                    _appBarKey.currentState.animateTo(
+                        page); //Sayfa sağa-sola swipe yapıldığında ConvexAppBar'ın seçili olduğu index'i değiştirir.
+                  });
+                },
+                children: <Widget>[
+                  //PageView içersinde bulunan sayfalar
+                  Kesfet(),
+                  BanaOzel(),
+                  Harita(),
+                  Secenekler(),
+                  Dahasi(),
+                ],
               ),
-              title: 'Keşfet'),
-          TabItem(
-              icon: Image(
-                image: AssetImage('icons/Profile.png'),
+              StreamBuilder(
+                stream: _fabIkonBloc.fabIkonStream,
+                builder: (context, snapshot) {
+                  if (snapshot.data == true) {
+                    return Positioned.fill(
+                        child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: 5,
+                        sigmaY: 5,
+                      ),
+                      child: Container(
+                        color: Colors.black.withOpacity(0),
+                      ),
+                    ));
+                  } else {
+                    return Container();
+                  }
+                },
               ),
-              title: 'Bana Özel'),
-          TabItem(
-              icon: Image(
-                image: AssetImage('icons/Location.png'),
-              ),
-              title: 'Harita'),
-          TabItem(
-              icon: Image(
-                image: AssetImage('icons/Setting.png'),
-              ),
-              title: 'Seçenekler'),
-          TabItem(
-            icon: Image(
-              image: AssetImage('icons/More-Circle.png'),
-            ),
-            title: 'Dahası',
-          )
-        ],
-        initialActiveIndex: selectedPage,
-        key:
-            _appBarKey, //PageView tarafından index'i kontrol edebilmek için GlobalKey tanımlandı.
-        onTap: (int i) {
-          //BottomNavigationBar ikonlarına tıklanıldığında PageView animasyonu ile sayfa geçişi sağlanıyor.
-          _pageController.animateToPage(i,
-              duration: Duration(milliseconds: 200), curve: Curves.easeInQuart);
-          setState(
-            () {
-              selectedPage = i;
-              _fabIkonBloc.fabIkonEkleSinki.add(null);
+            ],
+          ),
+          bottomNavigationBar: ConvexAppBar(
+            //BottomNavBar
+            items: [
+              TabItem(
+                  icon: Image(
+                    image: AssetImage('icons/Discovery.png'),
+                  ),
+                  title: 'Keşfet'),
+              TabItem(
+                  icon: Image(
+                    image: AssetImage('icons/Profile.png'),
+                  ),
+                  title: 'Bana Özel'),
+              TabItem(
+                  icon: Image(
+                    image: AssetImage('icons/Location.png'),
+                  ),
+                  title: 'Harita'),
+              TabItem(
+                  icon: Image(
+                    image: AssetImage('icons/Setting.png'),
+                  ),
+                  title: 'Seçenekler'),
+              TabItem(
+                icon: Image(
+                  image: AssetImage('icons/More-Circle.png'),
+                ),
+                title: 'Dahası',
+              )
+            ],
+            initialActiveIndex: selectedPage,
+            key:
+                _appBarKey, //PageView tarafından index'i kontrol edebilmek için GlobalKey tanımlandı.
+            onTap: (int i) {
+              //BottomNavigationBar ikonlarına tıklanıldığında PageView animasyonu ile sayfa geçişi sağlanıyor.
+              _pageController.animateToPage(i,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeInQuart);
+              setState(
+                () {
+                  selectedPage = i;
+                  _fabIkonBloc.fabIkonEkleSinki.add(false);
+                },
+              );
             },
-          );
-        },
-        color: Color.fromARGB(255, 77, 77, 77),
-        activeColor: Color.fromARGB(255, 3, 114, 156),
-        style: TabStyle.fixed,
-        backgroundColor: Colors.white,
-      ),
-      floatingActionButton: FabIkon(),
-    );
+            color: Color.fromARGB(255, 77, 77, 77),
+            activeColor: Color.fromARGB(255, 3, 114, 156),
+            style: TabStyle.fixed,
+            backgroundColor: Colors.white,
+          ),
+          floatingActionButton: FabIkon(),
+        ));
   }
 }

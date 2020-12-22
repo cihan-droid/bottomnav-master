@@ -1,12 +1,14 @@
 import 'dart:async';
 
 class FabIkonBloc {
-  StreamController<bool> fabIkonStreamController =
+  StreamController<bool> _fabIkonStreamController =
       StreamController<bool>.broadcast();
-  Sink<bool> get fabIkonEkleSinki => fabIkonStreamController.sink;
-  Stream<bool> get fabIkonStream => fabIkonStreamController.stream;
+  Sink<bool> get fabIkonEkleSinki => _fabIkonStreamController.sink;
+  Stream<bool> get fabIkonStream => _fabIkonStreamController.stream;
+
+  FabIkonBloc();
 
   void dispose() {
-    fabIkonStreamController.close();
+    _fabIkonStreamController.close();
   }
 }
